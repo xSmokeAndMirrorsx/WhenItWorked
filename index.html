@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+  <header><title>WROTiTT Forum</title></header>
+  <head>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+  </head>
+  
+  <!-- Start of Main Body-->
+  <body id="MainBod" style="background-color:black; min-height:100%">
+    <style>
+            div.a{
+                text-align: center;
+            }div.PostnFeedDiv{
+	    	text-align: center;
+	    }
+    </style>
+	  
+    <!-- Title and Intro Div -->
+    <div class="a" style="background-color:dimgrey ">
+            <h1 class="multicolor" style="color:white;">WROTiTT</h1>
+            <h2 class="multicolor" id="uName"></h2>
+            <p></p>
+    </div>
+     
+    <!-- Div containing 3 vertical divs -->
+    <div style="background-color:dimgrey; min-height:100%">
+      <!-- Social Div -->
+      <div class ="a" style="display: inline-block; *display: inline; width: 19%; background-color: slategrey; vertical-align: top; min-height:100%;">
+        <div class ="a" style="background-color: grey;">
+            <h2 class ="multicolor">Social: Friends & Events</h2>
+        </div>
+            <h3 id = "correct_count">Correct Guesses</h3>
+            <h2 id = "correct"></h2>
+            <!-- <ul id = "correct-answers"></ul> -->
+
+      </div>
+      
+      <!-- Posting and Feed div -->
+      <div class ="PostnFeedDiv" style = "display: inline-block; *display: inline; width: 60%; background-color: silver; vertical-align: top; height:100%;">
+            <h2 class ="multicolorF">Feed: Posts & Comments</h2>
+	    <p class = "multicolorF">Welcome, <b id="UsrNme">--</b></p>
+	    <p class="multicolorF">Type what you want to post: <input type="text" id="post"></p>
+	    <button onclick = "printPost()">Post</button>
+	    <p></p>
+	    <!-- <button onclick = "getPost()">Refresh Posts</button>
+	    <p></p> -->
+	    <div id="producttable">
+	    </div>
+	      
+	    <template id="productrow">
+	      <div class = "postbox">
+ 	      <div style="background-color: white">
+    		<h3 style="text-align: left; padding-bottom: 5px"></h3>
+		<p style="text-align: center; padding-bottom: 5px; padding-top: 5px"></p>
+		<h5 style="text-align: right; padding-top: 5px"></h5>
+		<div class = "commentbox" id="commentSection" style="background-color: lightgrey"><h4 style = "text-align: left; padding-left: 2px">Comments:</h4></div>
+	      </div>
+	      <div style="width:100%">
+	        <button> Like </button> or <b>Comment:</b><input class = "commText" style = "display: inline-block; *display: inline" type="text"><button style = "display: inline-block; *display: inline;">Submit Comment</button>
+	      </div>
+	      </div>
+	    </template>
+	      
+	    <template class="commentPost" id="productComment">
+	      <h4 style="text-align: left; padding-bottom: 1px"></h4>
+	      <p style="text-align: center; padding-bottom: 1px; padding-top: 1px"></p>
+	      <h5 style="text-align: right; padding-left: 20%; padding-top: 1px"></h5>
+	    </template>
+      </div>
+      
+      <!-- Profile Options Div -->
+      <div class ="a" style="display: inline-block; *display: inline; width: 19%; background-color: slategrey; vertical-align: top; height: 100%;">
+        <div class="a" style="background-color: grey;">
+          <h2 class ="multicolor">User: Profile and Options</h2>
+            </div>
+	    <h3 id = "profName"></h3>
+            Name: <input type = "text" id = "name">
+            <button onclick = "submitName()">Change Name</button>
+            <p></p>
+            Customize Word Color: <input type = "color" id = "wordColor">
+            <p></p>
+      </div>
+          
+    </div>
+
+
+    <!-- Script containing functions relavant to UI -->
+    <script>
+	var postCount = 0;
+	//var glblPostCount = 0;
+	//var postTime = 0.0;
+	var postData = "";
+	var usrName = "";
+	var postLikes = 0;
+	var postCommNum = 0;
+	var commentArr = [];
+	var index = 0;
+	//var postNumArr = [5,4,3,2,1];
+	    
+	var postNum = 0;
+	var loadNum = 5;
+	    
+	var likedPostNum;
+	var likedPostNum1;
+	var likedPostNum2;
+	var likedPostNum3;
+	var likedPostNum4;
+	    
+	getPost();
+	sleep(1500);//
+	getPost();//for some reason doesnt load comments in on first call, but does on second call
+        
+	var add_like = function(data){
+	    console.log(data);
+	    $.ajax({
+                method: "POST",
+                url: "postHandle.php",
+		data: {"postId" : data},
+                success : function(data) {
+		    //console.log(data);
+		    //outPost(data);
+		}
+	    })
+	    sleep(200);
+	    getPost();
+	    //console.log("After PUT");
+	}
+	var add_comment = function(parentPost){
+	    var newCommTexts = document.querySelectorAll('.commText');
+	    if(parentPost%5==0){
+	    var commData = newCommTexts[0].value;
+	    newCommTexts[0].value = "";
+	    }else if(parentPost%5==1){
+	    var commData = newCommTexts[1].value;
+	    newCommTexts[1].value = "";
+	    }else if(parentPost%5==2){
+	    var commData = newCommTexts[2].value;
+	    newCommTexts[2].value = "";
+	    }else if(parentPost%5==3){
+	    var commData = newCommTexts[3].value;
+	    newCommTexts[3].value = "";
+	    }else if(parentPost%5==4){
+	    var commData = newCommTexts[4].value;
+	    newCommTexts[4].value = "";
+	    }
+	    console.debug(parentPost);
+	    console.debug(commData);
+	    $.ajax({
+                method: "POST",
+                url: "postHandle.php",
+		data: {"parentPostId" : parentPost, "commentData": commData, "usrName": document.getElementById("UsrNme").innerText},
+                success : function(data) {
+		    //console.log(data);
+		    //outPost(data);
+		}
+	    })
+	    sleep(500);
+	    getPost();
+	    //console.log("After PUT");
+	}
+	function sleep(milliseconds) {
+  	    const date = Date.now();
+  	    let currentDate = null;
+  	    do {
+    	        currentDate = Date.now();
+  	    } while (currentDate - date < milliseconds);
+	}
+	
+	    
+	function getComment(tmpVar){
+	    console.log(tmpVar);
+	    $.ajax({
+                method: "GET",
+                url: "postHandle.php",
+		data: {"commentedPost" : tmpVar},
+                success : function(data) {
+		    //commentArr = Array(data.length);
+		    for(let i=0; i<data.length;i++){
+		        commentArr.push(data[i]);
+		    }
+		    sleep(1500);
+		    //console.log(commentArr);
+		}
+	    })
+	    sleep(2000);
+	}
+	    
+	function getPost(){
+	    //console.log("Before GET");
+	    $.ajax({
+                method: "GET",
+                url: "postHandle.php",
+		data: {"postNum" : postNum},
+                success : function(data) {
+		    console.log(data);
+		    outPost(data);
+		}
+	    })
+	    //console.log("After GET");
+	}
+
+	    
+	var outPost = function(data) {
+	    sleep(400);
+	    var tbody = document.querySelector('#producttable');
+	    var cTexts = tbody.querySelectorAll('.commText');
+	    console.log(cTexts);
+	    var cText_1 = cTexts[0];
+	    var cText_2 = cTexts[1];
+	    var cText_3 = cTexts[2];
+	    var cText_4 = cTexts[3];
+	    var cText_5 = cTexts[4];
+	    tbody.innerHTML = '';
+	    for(postNum=0; postNum<25;postNum+=5){
+		//setName(data[postNum+1]);
+		usrName = data[postNum+1];
+		//setPostNum(data[postNum]);
+		postCount = data[postNum];
+		//setPostLikes(data[postNum+2]);
+		postLikes = data[postNum+2];
+		//setData(data[postNum+3]);
+		postData = data[postNum+3];
+		postCommNum = data[postNum+4];
+		    
+	    	if ('content' in document.createElement('template')) {
+    	            var tbody = document.querySelector('#producttable');
+    	            var templateP = document.querySelector('#productrow');
+
+    	            var clone = templateP.content.cloneNode(true);
+		    var div = clone.querySelectorAll("div");
+		    var commentDiv = clone.querySelectorAll('.commentbox');
+		    //var commentDiv = divvy[0].querySelectorAll("div");
+    	            var postDispName = clone.querySelectorAll("h3");
+		    var postDispData = clone.querySelectorAll("p");
+		    var postDispLikes = clone.querySelectorAll("h5");
+		    var butt = clone.querySelectorAll("button");
+		    var cmts = clone.querySelectorAll('.commText');
+			
+		    if(postCommNum != 0){
+			commentArr = [];
+			getComment(postCount);
+			sleep(2000);
+			var commentInfo = new Array;
+			var commentInfo = commentArr.filter(word => word.length > 0);
+			console.log(commentInfo);
+			console.log(commentInfo[0]);
+		    	for(let i=0; i < parseInt(postCommNum); i++){
+			    index = (i * 3);
+			    console.log(commentArr);
+			    console.log(postCommNum);
+			    var found = commentArr.find((element, index) => index >= 0);
+			    console.log(found);
+			    var templateC = document.querySelector('#productComment');
+			    var commclone = templateC.content.cloneNode(true);
+			    var commName = commclone.querySelectorAll("h4");
+			    var commLikes = commclone.querySelectorAll("h5");
+			    var commData = commclone.querySelectorAll("p");
+			    commName[0].textContent = commentArr[parseInt(index)];
+			    //console.log(index);
+			    console.log(commentArr[0]);
+			    commLikes[0].textContent = commentArr[parseInt(index)+1];
+			    //console.log(index+1);
+			    console.log(commentArr[parseInt(index)+1]);
+			    commData[0].textContent = commentArr[parseInt(index)+2];
+			    //console.log(index+2);
+			    console.log(commentArr[parseInt(index)+2]);
+			    div[2].appendChild(commclone);
+			    
+			}
+		    }
+
+		    if((postNum/5)==0){
+			likedPostNum = postCount;   
+			butt[0].onclick = function(){add_like(likedPostNum);}
+			if((cText_1 != null) || (cText_1 != undefined)){
+			    cmts[0].value = cText_1.value;   
+			}else{cmts[0].value = "";}
+			butt[1].onclick = function(){add_comment(likedPostNum);}
+		    }else if((postNum/5)==1){
+			likedPostNum1 = postCount;   
+			butt[0].onclick = function(){add_like(likedPostNum1);}
+			if((cText_2 != null) || (cText_2 != undefined)){
+			    cmts[0].value = cText_2.value;   
+			}else{cmts[0].value = "";}
+			butt[1].onclick = function(){add_comment(likedPostNum1);}
+		    }else if((postNum/5)==2){
+			likedPostNum2 = postCount;   
+			butt[0].onclick = function(){add_like(likedPostNum2);}
+			if((cText_3 != null) || (cText_3 != undefined)){
+			    cmts[0].value = cText_3.value;   
+			}else{cmts[0].value = "";}
+			butt[1].onclick = function(){add_comment(likedPostNum2);}
+		    }else if((postNum/5)==3){
+			likedPostNum3 = postCount;   
+			butt[0].onclick = function(){add_like(likedPostNum3);}
+			if((cText_4 != null) || (cText_4 != undefined)){
+			    cmts[0].value = cText_4.value;   
+			}else{cmts[0].value = "";}
+			butt[1].onclick = function(){add_comment(likedPostNum3);}
+		    }else if((postNum/5)==4){
+			likedPostNum4 = postCount;   
+			butt[0].onclick = function(){add_like(likedPostNum4);}
+			if((cText_5 != null) || (cText_5 != undefined)){
+			    cmts[0].value = cText_5.value;   
+			}else{cmts[0].value = "";}
+			butt[1].onclick = function(){add_comment(likedPostNum4);}
+		    }
+		    butt[0].textContent = ("Like!!");
+		    butt[1].textContent = ("Comment!");
+    	            postDispName[0].textContent = "User: " + usrName;
+		    postDispLikes[0].textContent = "Likes: " + postLikes;
+    	            postDispData[0].textContent = postData;
+
+		    clone.className ="postbox";
+    	            tbody.appendChild(clone);
+    	        } else {
+  	            // Find another way to add the rows to the table because
+  	            // the HTML template element is not supported.
+	        }
+	    }
+	}
+		
+	//setInterval (getPost,25000);
+	
+        //function used to change introduction based on user input name
+        var submitName = function (){
+	    console.log("Changing Name");
+            document.getElementById("uName").innerText = "What's on your mind, " + document.getElementById("name").value + "? Read / Write about it?" ;
+	    document.getElementById("profName").innerText = document.getElementById("name").value + "'s Preferences:";
+	    document.getElementById("UsrNme").innerText = document.getElementById("name").value;
+            $.ajax({
+                method: "POST",
+                url: "cheatsheet.php",
+                data: { "receiver_name": document.getElementById("name").value},
+                success : function(data) {
+                    
+                }
+            })
+        }
+
+    var toColor = function ( d ) {
+       var c = Number(d).toString(16);
+       return "#" + ( "000000".substr( 0, 6 - c.length ) + c.toUpperCase() );
+    }
+	
+        //function used to change the color of the headers based on user input
+        var changeColorHandler = function (evt){
+            let mycolor = evt.currentTarget.value
+	    let wordColor = toColor((Number(Number(mycolor).toString(16)) + 0x777777) % 0xffffff);
+	    console.log(wordColor);
+	    console.log(parseInt(mycolor,16));
+            var FeedBackgnd = document.getElementsByClassName("PostnFeedDiv");
+	    FeedBackgnd[0].style.background = mycolor;
+	    var elements = document.getElementsByClassName("multicolorF");
+            for(var i=0; i<elements.length; i++){
+              elements[i].style.color = wordColor;
+            }
+        }
+	
+	var clearPosts = function(){
+	    var tbody = document.querySelector("tbody");
+	    tbody.innerHTML = '';
+	}
+	
+	var printPost = function (){
+	    $.ajax({
+                method: "POST",
+                url: "postHandle.php",
+                data: { "postName": document.getElementById("UsrNme").innerText, "postText": document.getElementById("post").value},
+                success : function(data) {
+                    
+                }
+            })
+	    document.getElementById("post").value = "";
+	    sleep(250);
+	    getPost();
+	}
+
+        document.querySelector("#wordColor").addEventListener(
+            "change",
+            changeColorHandler
+        )
+        
+    
+    </script>
+</body>
+</html>
