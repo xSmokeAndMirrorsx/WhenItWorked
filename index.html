@@ -195,7 +195,7 @@
 		    var butt = clone.querySelectorAll("button");
 			
 		    if(postCommNum != 0){
-			var commentArr = [];
+			commentArr.splice(0,commentArr.length);
 			getComment(postCount);
 			//sleep(2000);
 			//var commentInfo = new Array;
