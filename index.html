@@ -7,7 +7,6 @@
         display: none;
       }
     </style>
-    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
   </head>
   
@@ -16,9 +15,7 @@
     <style>
             div.a{
                 text-align: center;
-            }div.PostnFeedDiv{
-	    	text-align: center;
-	    }
+            }
     </style>
 	  
     <!-- Title and Intro Div -->
@@ -42,33 +39,32 @@
       </div>
       
       <!-- Posting and Feed div -->
-      <div class ="PostnFeedDiv" style = "display: inline-block; *display: inline; width: 60%; background-color: silver; vertical-align: top; height:100%;">
-            <h2 class ="multicolorF">Feed: Posts & Comments</h2>
-	    <p class = "multicolorF">Welcome, <b id="UsrNme">--</b></p>
-	    <p class="multicolorF">Type what you want to post: <input type="text" id="post"></p>
+      <div class ="a" style = "display: inline-block; *display: inline; width: 60%; background-color: silver; vertical-align: top; height:100%;">
+            <h2 class ="multicolor">Feed: Posts & Comments</h2>
+	    Welcome, <b id="UsrNme">--</b>
+	    <p></p>
+            Type what you want to post: <input type="text" id="post">
 	    <button onclick = "printPost()">Post</button>
 	    <p></p>
-	    <!-- <button onclick = "getPost()">Refresh Posts</button>
-	    <p></p> -->
+	    <button onclick = "getPost()">Refresh Posts</button>
+	    <p></p>
 	    <div id="producttable">
 	    </div>
 	      
 	    <template id="productrow">
-	      <div class = "postbox">
  	      <div style="background-color: white">
     		<h3 style="text-align: left; padding-bottom: 5px"></h3>
 		<p style="text-align: center; padding-bottom: 5px; padding-top: 5px"></p>
 		<h5 style="text-align: right; padding-top: 5px"></h5>
-		<div class = "commentbox" id="commentSection" style="background-color: lightgrey"><h4 style = "text-align: left; padding-left: 2px">Comments:</h4></div>
+		<div id="commentSection" style="background-color: lightgrey"><b style = "text-align: left; padding-left: 2px">Comments:</b></div>
 	      </div>
 	      <div style="width:100%">
-	        <button> Like </button> or <b>Comment:</b><input class = "commText" style = "display: inline-block; *display: inline" type="text"><button style = "display: inline-block; *display: inline;">Submit Comment</button>
-	      </div>
+	        <button> Like </button> or <b>Comment:</b><input style = "display: inline-block; *display: inline" type="text"><button style = "display: inline-block; *display: inline;">Submit Comment</button>
 	      </div>
 	    </template>
 	      
 	    <template class="commentPost" id="productComment">
-	      <h4 style="text-align: left; padding-bottom: 1px"></h4>
+	      <h4 style="text-align: left; padding-left: 20%; padding-bottom: 1px"></h4>
 	      <p style="text-align: center; padding-bottom: 1px; padding-top: 1px"></p>
 	      <h5 style="text-align: right; padding-left: 20%; padding-top: 1px"></h5>
 	    </template>
@@ -113,7 +109,7 @@
 	var likedPostNum4;
 	    
 	getPost();
-	sleep(1500);//
+	sleep(200);//
 	getPost();//for some reason doesnt load comments in on first call, but does on second call
         
 	var add_like = function(data){
@@ -131,39 +127,7 @@
 	    getPost();
 	    //console.log("After PUT");
 	}
-	var add_comment = function(parentPost){
-	    var newCommTexts = document.querySelectorAll('.commText');
-	    if(parentPost%5==0){
-	    var commData = newCommTexts[0].value;
-	    newCommTexts[0].value = "";
-	    }else if(parentPost%5==1){
-	    var commData = newCommTexts[1].value;
-	    newCommTexts[1].value = "";
-	    }else if(parentPost%5==2){
-	    var commData = newCommTexts[2].value;
-	    newCommTexts[2].value = "";
-	    }else if(parentPost%5==3){
-	    var commData = newCommTexts[3].value;
-	    newCommTexts[3].value = "";
-	    }else if(parentPost%5==4){
-	    var commData = newCommTexts[4].value;
-	    newCommTexts[4].value = "";
-	    }
-	    console.debug(parentPost);
-	    console.debug(commData);
-	    $.ajax({
-                method: "POST",
-                url: "postHandle.php",
-		data: {"parentPostId" : parentPost, "commentData": commData, "usrName": document.getElementById("UsrNme").innerText},
-                success : function(data) {
-		    //console.log(data);
-		    //outPost(data);
-		}
-	    })
-	    sleep(500);
-	    getPost();
-	    //console.log("After PUT");
-	}
+	
 	function sleep(milliseconds) {
   	    const date = Date.now();
   	    let currentDate = null;
@@ -172,7 +136,6 @@
   	    } while (currentDate - date < milliseconds);
 	}
 	
-	    
 	function getComment(tmpVar){
 	    console.log(tmpVar);
 	    $.ajax({
@@ -184,15 +147,14 @@
 		    for(let i=0; i<data.length;i++){
 		        commentArr.push(data[i]);
 		    }
-		    sleep(1500);
+		    //sleep(300);
 		    //console.log(commentArr);
 		}
 	    })
-	    sleep(2000);
 	}
 	    
 	function getPost(){
-	    //console.log("Before GET");
+	    console.log("Before GET");
 	    $.ajax({
                 method: "GET",
                 url: "postHandle.php",
@@ -202,20 +164,12 @@
 		    outPost(data);
 		}
 	    })
-	    //console.log("After GET");
+	    console.log("After GET");
 	}
 
 	    
 	var outPost = function(data) {
-	    sleep(400);
 	    var tbody = document.querySelector('#producttable');
-	    var cTexts = tbody.querySelectorAll('.commText');
-	    console.log(cTexts);
-	    var cText_1 = cTexts[0];
-	    var cText_2 = cTexts[1];
-	    var cText_3 = cTexts[2];
-	    var cText_4 = cTexts[3];
-	    var cText_5 = cTexts[4];
 	    tbody.innerHTML = '';
 	    for(postNum=0; postNum<25;postNum+=5){
 		//setName(data[postNum+1]);
@@ -234,26 +188,22 @@
 
     	            var clone = templateP.content.cloneNode(true);
 		    var div = clone.querySelectorAll("div");
-		    var commentDiv = clone.querySelectorAll('.commentbox');
-		    //var commentDiv = divvy[0].querySelectorAll("div");
+		    var commentDiv = div[0].querySelectorAll("div");
     	            var postDispName = clone.querySelectorAll("h3");
 		    var postDispData = clone.querySelectorAll("p");
 		    var postDispLikes = clone.querySelectorAll("h5");
 		    var butt = clone.querySelectorAll("button");
-		    var cmts = clone.querySelectorAll('.commText');
 			
 		    if(postCommNum != 0){
-			commentArr = [];
 			getComment(postCount);
-			sleep(2000);
-			var commentInfo = new Array;
-			var commentInfo = commentArr.filter(word => word.length > 0);
-			console.log(commentInfo);
-			console.log(commentInfo[0]);
-		    	for(let i=0; i < parseInt(postCommNum); i++){
+			//sleep(2000);
+			//var commentInfo = new Array;
+			//var commentInfo = commentArr.filter(word => word.length > 0);
+			//console.log(commentInfo);
+			//console.log(commentInfo[0]);
+		    	for(let i=0; i < postCommNum; i++){
 			    index = (i * 3);
 			    console.log(commentArr);
-			    console.log(postCommNum);
 			    var found = commentArr.find((element, index) => index >= 0);
 			    console.log(found);
 			    var templateC = document.querySelector('#productComment');
@@ -261,55 +211,34 @@
 			    var commName = commclone.querySelectorAll("h4");
 			    var commLikes = commclone.querySelectorAll("h5");
 			    var commData = commclone.querySelectorAll("p");
-			    commName[0].textContent = commentArr[parseInt(index)];
-			    //console.log(index);
+			    commName[0].textContent = commentArr[index];
+			    console.log(index);
 			    console.log(commentArr[0]);
-			    commLikes[0].textContent = commentArr[parseInt(index)+1];
-			    //console.log(index+1);
-			    console.log(commentArr[parseInt(index)+1]);
-			    commData[0].textContent = commentArr[parseInt(index)+2];
-			    //console.log(index+2);
-			    console.log(commentArr[parseInt(index)+2]);
-			    div[2].appendChild(commclone);
-			    
+			    commLikes[0].textContent = commentArr[index+1];
+			    console.log(index+1);
+			    console.log(commentArr[index+1]);
+			    commData[0].textContent = commentArr[index+2];
+			    console.log(index+2);
+			    console.log(commentArr[index+2]);
+			    div[1].appendChild(commclone);
 			}
 		    }
 
 		    if((postNum/5)==0){
 			likedPostNum = postCount;   
 			butt[0].onclick = function(){add_like(likedPostNum);}
-			if((cText_1 != null) || (cText_1 != undefined)){
-			    cmts[0].value = cText_1.value;   
-			}else{cmts[0].value = "";}
-			butt[1].onclick = function(){add_comment(likedPostNum);}
 		    }else if((postNum/5)==1){
 			likedPostNum1 = postCount;   
 			butt[0].onclick = function(){add_like(likedPostNum1);}
-			if((cText_2 != null) || (cText_2 != undefined)){
-			    cmts[0].value = cText_2.value;   
-			}else{cmts[0].value = "";}
-			butt[1].onclick = function(){add_comment(likedPostNum1);}
 		    }else if((postNum/5)==2){
 			likedPostNum2 = postCount;   
 			butt[0].onclick = function(){add_like(likedPostNum2);}
-			if((cText_3 != null) || (cText_3 != undefined)){
-			    cmts[0].value = cText_3.value;   
-			}else{cmts[0].value = "";}
-			butt[1].onclick = function(){add_comment(likedPostNum2);}
 		    }else if((postNum/5)==3){
 			likedPostNum3 = postCount;   
 			butt[0].onclick = function(){add_like(likedPostNum3);}
-			if((cText_4 != null) || (cText_4 != undefined)){
-			    cmts[0].value = cText_4.value;   
-			}else{cmts[0].value = "";}
-			butt[1].onclick = function(){add_comment(likedPostNum3);}
 		    }else if((postNum/5)==4){
 			likedPostNum4 = postCount;   
 			butt[0].onclick = function(){add_like(likedPostNum4);}
-			if((cText_5 != null) || (cText_5 != undefined)){
-			    cmts[0].value = cText_5.value;   
-			}else{cmts[0].value = "";}
-			butt[1].onclick = function(){add_comment(likedPostNum4);}
 		    }
 		    butt[0].textContent = ("Like!!");
 		    butt[1].textContent = ("Comment!");
@@ -317,7 +246,6 @@
 		    postDispLikes[0].textContent = "Likes: " + postLikes;
     	            postDispData[0].textContent = postData;
 
-		    clone.className ="postbox";
     	            tbody.appendChild(clone);
     	        } else {
   	            // Find another way to add the rows to the table because
@@ -326,7 +254,7 @@
 	    }
 	}
 		
-	//setInterval (getPost,25000);
+	//setInterval (getPost,2500);
 	
         //function used to change introduction based on user input name
         var submitName = function (){
@@ -344,22 +272,12 @@
             })
         }
 
-    var toColor = function ( d ) {
-       var c = Number(d).toString(16);
-       return "#" + ( "000000".substr( 0, 6 - c.length ) + c.toUpperCase() );
-    }
-	
         //function used to change the color of the headers based on user input
         var changeColorHandler = function (evt){
             let mycolor = evt.currentTarget.value
-	    let wordColor = toColor((Number(Number(mycolor).toString(16)) + 0x777777) % 0xffffff);
-	    console.log(wordColor);
-	    console.log(parseInt(mycolor,16));
-            var FeedBackgnd = document.getElementsByClassName("PostnFeedDiv");
-	    FeedBackgnd[0].style.background = mycolor;
-	    var elements = document.getElementsByClassName("multicolorF");
+            var elements = document.getElementsByClassName("multicolor");
             for(var i=0; i<elements.length; i++){
-              elements[i].style.color = wordColor;
+              elements[i].style.color = mycolor;
             }
         }
 	
@@ -378,7 +296,7 @@
                 }
             })
 	    document.getElementById("post").value = "";
-	    sleep(250);
+	    sleep(100);
 	    getPost();
 	}
 

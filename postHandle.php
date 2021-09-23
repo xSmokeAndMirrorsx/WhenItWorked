@@ -23,7 +23,7 @@ if ($verb === "POST"){
         $qry->execute();
         console.log("Insert Attempted");
         //$qry->execute(array(strval($postName), intval($postNum), strval($postText)));
-    }else if(($_POST['postId'] != NULL) || ($_POST['postId'] != array())){
+    }else{
         $postNum = $_POST["postId"];
         $prepper = $dbhandle->prepare("SELECT * FROM posts WHERE number = ?");
         //$prepper->bindParam(1, $postNum);
@@ -36,26 +36,6 @@ if ($verb === "POST"){
         $qry->bindParam(2, $postNum);
         $qry->execute();
         console.log("Insert Attempted");
-    }else{
-	$postNum = $_POST["parentPostId"];
-	$userName = $_POST["usrName"];
-	$prepper = $dbhandle->prepare("SELECT * FROM posts WHERE number = ?");
-	$prepper->execute([$postNum]);
-	$stmt = $prepper->fetch();
-        $commCount = ($stmt['commentnum']);
-	    
-	$commCount = $commCount + 1;
-	$qry = $dbhandle->prepare("UPDATE posts SET commentnum = ? WHERE number = ?");
-        $qry->bindParam(1, $commCount);
-        $qry->bindParam(2, $postNum);
-        $qry->execute();
-		
-	$qry = $dbhandle->prepare("INSERT INTO comments (postnum, comnum, comtext, comlikes, username) VALUES (?, ?, ?, 0, ?)");
-        $qry->bindParam(1, $postName);
-	$qry->bindParam(2, $commCount);
-        $qry->bindParam(3, $_POST["commentData"]);
-        $qry->bindParam(4, $userName);
-        $qry->execute();
     }
 }
 else if ($verb === "GET"){
