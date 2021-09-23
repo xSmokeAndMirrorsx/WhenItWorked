@@ -95,7 +95,7 @@
 	var usrName = "";
 	var postLikes = 0;
 	var postCommNum = 0;
-	var commentArr = [];
+	//var commentArr = [];
 	var index = 0;
 	//var postNumArr = [5,4,3,2,1];
 	    
@@ -195,6 +195,7 @@
 		    var butt = clone.querySelectorAll("button");
 			
 		    if(postCommNum != 0){
+			let commentArr = [];
 			getComment(postCount);
 			//sleep(2000);
 			//var commentInfo = new Array;
